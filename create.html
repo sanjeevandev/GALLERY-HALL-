@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Create Your 3D Museum | Giftvera</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .studio-wrap {
+      max-width: 920px;
+      margin: 80px auto 60px;
+      padding: 0 24px;
+    }
+
+    .studio-head {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .studio-head h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(2.5rem, 5vw, 3.8rem);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+    }
+
+    .studio-head p {
+      font-size: 1.0625rem;
+      color: var(--text-2);
+      margin-top: 10px;
+    }
+
+    .studio-card {
+      background: var(--surface-card);
+      border: 1px solid var(--surface-card-border);
+      border-radius: var(--radius-lg);
+      padding: 36px 32px;
+      box-shadow: var(--shadow-lg);
+      backdrop-filter: blur(16px);
+      margin-bottom: 28px;
+    }
+
+    .studio-card h2 {
+      font-family: var(--font-serif);
+      font-size: 1.85rem;
+      font-weight: 400;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .photo-grid-preview {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 14px;
+      margin-top: 20px;
+    }
+
+    .photo-slot {
+      aspect-ratio: 3 / 4;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #141113;
+      border: 1px solid var(--line);
+      position: relative;
+    }
+
+    .photo-slot img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .centerpiece-badge {
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      background: #17131A;
+      color: #F59E0B;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: var(--radius-pill);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Global Header -->
+  <header class="top-header">
+    <a href="product.html" class="nav-link">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+      <span>Our Museum Product</span>
+    </a>
+    <a href="product.html" class="logo-brand">
+      <span>Giftvera</span><span class="heart">♥</span>
+    </a>
+    <div class="header-actions">
+      <a href="index.html" class="badge-pill">
+        <span>Play Demo</span>
+      </a>
+    </div>
+  </header>
+
+  <main class="studio-wrap">
+    <div class="studio-head">
+      <h1>Museum Studio</h1>
+      <p>Curate your private 3D gallery, hang your photos, and invite someone special.</p>
+    </div>
+
+    <!-- Step 1: Dedication & Names -->
+    <section class="studio-card">
+      <h2>1. The Dedication</h2>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:18px;">
+        <div>
+          <label style="display:block;font-size:0.875rem;font-weight:500;margin-bottom:6px;">Recipient Name</label>
+          <input type="text" id="studio-recipient" class="text-box" value="Emma" placeholder="e.g. Emma" style="width:100%;padding:12px;border-radius:10px;background:var(--surface);border:1px solid var(--line);color:white;">
+        </div>
+        <div>
+          <label style="display:block;font-size:0.875rem;font-weight:500;margin-bottom:6px;">Your Name</label>
+          <input type="text" id="studio-sender" class="text-box" value="Luca" placeholder="e.g. Luca" style="width:100%;padding:12px;border-radius:10px;background:var(--surface);border:1px solid var(--line);color:white;">
+        </div>
+      </div>
+
+      <div style="margin-bottom:18px;">
+        <label style="display:block;font-size:0.875rem;font-weight:500;margin-bottom:6px;">Dedication Message</label>
+        <textarea id="studio-dedication" rows="2" style="width:100%;padding:12px;border-radius:10px;background:var(--surface);border:1px solid var(--line);color:white;font-family:var(--font-sans);">Twenty-seven rooms of you, and I still ran out of walls.</textarea>
+      </div>
+    </section>
+
+    <!-- Step 2: Photos -->
+    <section class="studio-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:12px;">
+        <h2>2. The Gallery Wall Collection</h2>
+        <label for="studio-file-input" class="badge-pill" style="cursor:pointer;background:white;color:#17131A;font-weight:600;padding:8px 16px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+          <span>+ Upload Your Photos</span>
+          <input type="file" id="studio-file-input" multiple accept="image/*" style="display:none;">
+        </label>
+      </div>
+      <p style="font-size:0.875rem;color:var(--text-2);margin-bottom:16px;">
+        Photos will be framed on your gallery walls. Click any photo below to set it as the illuminated Centerpiece.
+      </p>
+
+      <div class="photo-grid-preview" id="studio-photo-grid"></div>
+    </section>
+
+    <!-- Step 3: Launch -->
+    <div style="text-align:center;margin-top:32px;">
+      <button type="button" class="btn-create-launch" style="max-width:420px;margin:0 auto;" onclick="openCreatedMuseum()">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg>
+        <span>Enter Your Custom Museum</span>
+      </button>
+    </div>
+  </main>
+
+  <script src="gallery-manager.js"></script>
+  <script>
+    const studioGrid = document.getElementById('studio-photo-grid');
+    const studioInput = document.getElementById('studio-file-input');
+
+    const slotLabels = {
+      'centerpiece': '★ Centerpiece Rotunda',
+      'monolith_back': 'Rotunda North Wall',
+      'gallery_0': 'West Gallery 1',
+      'gallery_1': 'West Gallery 2',
+      'gallery_2': 'West Gallery 3',
+      'gallery_3': 'East Gallery 1',
+      'gallery_4': 'East Gallery 2',
+      'gallery_5': 'East Gallery 3',
+      'gallery_6': 'South Wall Left',
+      'gallery_7': 'South Wall Right'
+    };
+
+    const slotOrder = [
+      'centerpiece',
+      'gallery_0',
+      'gallery_1',
+      'gallery_2',
+      'gallery_3',
+      'gallery_4',
+      'gallery_5',
+      'gallery_6',
+      'gallery_7',
+      'monolith_back'
+    ];
+
+    async function refreshStudioGrid() {
+      if (!window.galleryManager || !studioGrid) return;
+      const photos = await window.galleryManager.getAllPhotos();
+      studioGrid.innerHTML = '';
+
+      photos.forEach((photo) => {
+        const slot = document.createElement('div');
+        slot.className = 'photo-slot';
+        slot.style.cursor = 'pointer';
+        slot.style.border = photo.isCenterpiece ? '2px solid #F59E0B' : '1px solid var(--line)';
+        slot.title = `${photo.title} (Click to set as Centerpiece)`;
+
+        const img = document.createElement('img');
+        img.src = photo.src;
+        slot.appendChild(img);
+
+        const labelText = slotLabels[photo.id] || (photo.isCenterpiece ? '★ Centerpiece' : 'Gallery Wall');
+        const badge = document.createElement('span');
+        badge.textContent = labelText;
+        badge.style.position = 'absolute';
+        badge.style.bottom = '4px';
+        badge.style.left = '4px';
+        badge.style.right = '4px';
+        badge.style.background = 'rgba(10,7,9,0.85)';
+        badge.style.color = photo.isCenterpiece ? '#F59E0B' : '#E2DFD2';
+        badge.style.fontSize = '0.625rem';
+        badge.style.fontWeight = '600';
+        badge.style.padding = '2px 4px';
+        badge.style.borderRadius = '4px';
+        badge.style.textAlign = 'center';
+        badge.style.whiteSpace = 'nowrap';
+        badge.style.overflow = 'hidden';
+        badge.style.textOverflow = 'ellipsis';
+        slot.appendChild(badge);
+
+        if (photo.isCenterpiece) {
+          const cpBadge = document.createElement('span');
+          cpBadge.className = 'centerpiece-badge';
+          cpBadge.textContent = '★ Centerpiece';
+          slot.appendChild(cpBadge);
+        }
+
+        slot.addEventListener('click', async () => {
+          photos.forEach(p => p.isCenterpiece = false);
+          photo.isCenterpiece = true;
+          await window.galleryManager.savePhoto(photo);
+          refreshStudioGrid();
+        });
+
+        studioGrid.appendChild(slot);
+      });
+    }
+
+    if (studioInput) {
+      studioInput.addEventListener('change', async (e) => {
+        if (!e.target.files || e.target.files.length === 0) return;
+        const files = Array.from(e.target.files);
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          const targetSlotId = slotOrder[i % slotOrder.length];
+          try {
+            const dataUrl = await window.galleryManager.processFile(file);
+            const cleanTitle = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
+            await window.galleryManager.savePhoto({
+              id: targetSlotId,
+              title: cleanTitle,
+              caption: 'Personal photo added to the gallery collection.',
+              src: dataUrl,
+              isCenterpiece: (targetSlotId === 'centerpiece' && i === 0)
+            });
+          } catch (err) {
+            console.warn('Error reading file', file.name, err);
+          }
+        }
+        await refreshStudioGrid();
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', refreshStudioGrid);
+
+    function openCreatedMuseum() {
+      const recipient = encodeURIComponent(document.getElementById('studio-recipient').value.trim());
+      const sender = encodeURIComponent(document.getElementById('studio-sender').value.trim());
+      const dedication = encodeURIComponent(document.getElementById('studio-dedication').value.trim());
+
+      window.location.href = `index.html?for=${recipient}&from=${sender}&msg=${dedication}`;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Our Museum | 3D Game Gift Experience | Giftvera</title>
+  <meta name="description" content="A 3D museum hung with your photos, to walk through together from anywhere.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23F0475D'><path d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/></svg>">
+</head>
+<body>
+
+  <!-- Top Global Header -->
+  <header class="top-header" id="global-header">
+    <a href="product.html" class="nav-link">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+      <span>Giftvera Store</span>
+    </a>
+    <a href="product.html" class="logo-brand">
+      <span>Giftvera</span><span class="heart">♥</span>
+    </a>
+    <div class="header-actions">
+      <a href="create.html" class="badge-pill">
+        <span>Create Your Own</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- ======================================================================
+       LOBBY VIEW ("Choose who walks in")
+       ====================================================================== -->
+  <section id="lobby-view">
+    <div class="lobby-viewport">
+      <canvas id="lobby-canvas"></canvas>
+
+      <div class="lobby-title-wrap">
+        <h1 class="lobby-heading">Choose who walks in.</h1>
+        <p class="lobby-subheading">Customize your character before stepping into the museum.</p>
+      </div>
+
+      <div class="turn-instruction">Drag your character to turn</div>
+
+      <div class="lobby-turn-controls">
+        <button type="button" class="turn-btn" id="turn-left" aria-label="Turn left">‹</button>
+        <button type="button" class="btn-icon" id="btn-close-up" style="border-radius:20px;padding:0 16px;width:auto;height:44px;background:#FFF;color:#17131A;font-weight:600;font-size:0.875rem;">Close-up</button>
+        <button type="button" class="turn-btn" id="turn-right" aria-label="Turn right">›</button>
+      </div>
+
+      <div class="lobby-bottom-bar">
+        <button type="button" class="btn-icon" id="btn-lobby-fs" title="Toggle Fullscreen" style="background:rgba(255,255,255,0.85);color:#17131A;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+        </button>
+        <button type="button" class="btn-icon" id="btn-lobby-about" title="About Our Museum" style="background:rgba(255,255,255,0.85);color:#17131A;border-radius:20px;padding:0 14px;width:auto;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+          <span style="font-size:0.8125rem;font-weight:600;">About</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Right Customizer Panel -->
+    <aside class="lobby-panel">
+      <div class="lobby-panel-head">
+        <div class="room-presence-badge" id="lobby-presence">
+          <span class="presence-dot">E</span>
+          <span id="lobby-presence-text">Emma is inside.</span>
+        </div>
+
+        <h2 class="panel-title">Your look</h2>
+
+        <!-- Kai / Mira Avatar Selectors -->
+        <div class="avatar-type-row">
+          <button type="button" class="avatar-type-btn active" id="type-kai">
+            <span class="avatar-badge">K</span>
+            <span>Kai</span>
+          </button>
+          <button type="button" class="avatar-type-btn" id="type-mira">
+            <span class="avatar-badge">M</span>
+            <span>Mira</span>
+          </button>
+        </div>
+
+        <!-- Height Row -->
+        <div class="height-row">
+          <button type="button" class="height-btn" data-height="short">Short</button>
+          <button type="button" class="height-btn active" data-height="average">Average</button>
+          <button type="button" class="height-btn" data-height="tall">Tall</button>
+        </div>
+
+        <!-- Subtabs (Skin, Hair, Eyes, Brows, Top, etc.) -->
+        <nav class="custom-subtabs" id="custom-subtabs"></nav>
+
+        <!-- Color Swatches Grid -->
+        <div class="swatch-section">
+          <div class="swatch-header">
+            <span id="swatch-category-title">Skin tone</span>
+            <button type="button" id="reset-look-btn" style="background:none;border:none;cursor:pointer;color:#7D7480;text-decoration:underline;font-size:0.75rem;">Reset look</button>
+          </div>
+          <div class="swatch-grid" id="swatch-grid"></div>
+        </div>
+      </div>
+
+      <!-- Player Name & Enter Action -->
+      <div class="lobby-panel-foot">
+        <div class="name-input-group">
+          <label class="name-label" for="player-name-field">Your name</label>
+          <input type="text" id="player-name-field" class="name-field" placeholder="Enter your name" value="Luca" maxlength="20">
+        </div>
+
+        <button type="button" class="btn-enter-museum" id="btn-enter">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg>
+          <span>Enter Museum</span>
+        </button>
+      </div>
+    </aside>
+  </section>
+
+  <!-- ======================================================================
+       3D IN-GAME MUSEUM EXPERIENCE
+       ====================================================================== -->
+  <section id="game-view">
+    <canvas id="museum-canvas"></canvas>
+
+    <!-- 3D Nametag & Speech Bubbles DOM Layer -->
+    <div id="nametag-layer" style="position:absolute;inset:0;pointer-events:none;z-index:15;"></div>
+
+    <!-- HUD Overlay -->
+    <div class="game-hud">
+      <!-- Presence Badge Top Left -->
+      <div class="hud-presence hud-interactive" id="game-presence">
+        <div class="presence-dots-stack">
+          <span class="presence-indicator-dot" style="background:#E08238;"></span>
+          <span class="presence-indicator-dot" style="background:#06B6D4;"></span>
+        </div>
+        <span id="presence-count">2 here</span>
+      </div>
+
+      <!-- Top Right Actions Toolbar -->
+      <div class="hud-toolbar hud-interactive">
+        <button type="button" class="tool-action-btn" id="btn-insert-photo-hud" title="Insert / Hang Your Photo on Wall">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/><line x1="12" x2="12" y1="9" y2="15"/><line x1="9" x2="15" y1="12" y2="12"/></svg>
+        </button>
+        <button type="button" class="tool-action-btn" id="btn-cam-toggle" title="Toggle First/Third Person View">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+        <button type="button" class="tool-action-btn" id="btn-emote-toggle" title="React with Emote">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" x2="9.01" y1="9" y2="9"/><line x1="15" x2="15.01" y1="9" y2="9"/></svg>
+        </button>
+        <button type="button" class="tool-action-btn" id="btn-chat-toggle" title="Open Chat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </button>
+        <button type="button" class="tool-action-btn" id="btn-share-link" title="Share Private Museum Link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        </button>
+        <button type="button" class="tool-action-btn" id="btn-audio-toggle" title="Toggle Ambient Sound">
+          <svg id="audio-icon-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+          <svg id="audio-icon-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" x2="1" y1="1" y2="23"/></svg>
+        </button>
+        <button type="button" class="tool-action-btn" id="btn-game-fs" title="Toggle Fullscreen">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+        </button>
+      </div>
+
+      <!-- Interaction Tooltip Prompt (Center Screen) -->
+      <div class="interaction-prompt hud-interactive" id="interaction-prompt">
+        <span class="key-badge">E</span>
+        <span id="prompt-text">View Artwork</span>
+      </div>
+
+      <!-- Mobile Touch Controls -->
+      <div class="touch-controls">
+        <div class="joystick-zone" id="joystick-zone">
+          <div class="joystick-label">Move</div>
+          <div class="joystick-thumb" id="joystick-thumb"></div>
+        </div>
+        <button type="button" class="action-trigger-btn" id="action-trigger" aria-label="Interact / Sit / View">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 19V5m-7 7 7-7 7 7"/></svg>
+        </button>
+      </div>
+
+      <!-- Chat Drawer -->
+      <div id="chat-drawer">
+        <div class="chat-header">
+          <span>Museum Hall Chat</span>
+          <button type="button" id="btn-chat-close" style="background:none;border:none;color:white;cursor:pointer;">✕</button>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+          <div class="chat-msg">
+            <span class="sender">Museum Guide:</span>
+            <span>Welcome to Our Museum. Walk through together, stop at the centerpiece, or rest on the benches.</span>
+          </div>
+        </div>
+        <div class="chat-input-row">
+          <input type="text" id="chat-text-input" class="chat-input" placeholder="Say something..." maxlength="120">
+          <button type="button" id="btn-chat-send" class="chat-send-btn">Send</button>
+        </div>
+      </div>
+
+      <!-- Emote Reaction Menu -->
+      <div id="emote-menu">
+        <button type="button" class="emote-btn" data-emote="❤️">❤️</button>
+        <button type="button" class="emote-btn" data-emote="👋">👋</button>
+        <button type="button" class="emote-btn" data-emote="✨">✨</button>
+        <button type="button" class="emote-btn" data-emote="😊">😊</button>
+        <button type="button" class="emote-btn" data-emote="👏">👏</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================================
+       ARTWORK INSPECTION OVERLAY
+       ====================================================================== -->
+  <div id="inspect-overlay">
+    <div class="inspect-top-bar">
+      <div class="inspect-badge">Viewing</div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button type="button" class="inspect-close-btn" id="btn-inspect-replace-photo" style="background:rgba(240,71,93,0.2);border-color:#F0475D;color:#FFF;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          <span>Insert Your Photo</span>
+        </button>
+        <button type="button" class="inspect-close-btn" id="btn-close-inspect">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          <span>Close</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="inspect-art-container">
+      <div class="inspect-frame">
+        <img id="inspect-image" class="inspect-image" src="" alt="Artwork">
+      </div>
+      <div class="inspect-details">
+        <h2 id="inspect-title" class="inspect-title">Artwork Title</h2>
+        <p id="inspect-caption" class="inspect-caption">Caption</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       PHOTO INSERT MODAL
+       ====================================================================== -->
+  <div id="photo-insert-modal" style="position:fixed;inset:0;background:rgba(10,7,9,0.88);backdrop-filter:blur(18px);z-index:110;display:none;align-items:center;justify-content:center;">
+    <div style="background:#17131A;border:1px solid var(--line-strong);border-radius:18px;padding:32px;max-width:520px;width:92%;box-shadow:var(--shadow-lg);position:relative;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+        <h3 style="font-family:var(--font-serif);font-size:1.85rem;font-weight:400;color:white;">Insert Photo into Gallery</h3>
+        <button type="button" id="btn-close-insert-modal" style="background:none;border:none;color:var(--text-2);font-size:1.25rem;cursor:pointer;">✕</button>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <label style="display:block;font-size:0.8125rem;color:var(--text-2);margin-bottom:6px;">Choose Gallery Wall / Frame</label>
+        <select id="insert-target-select" style="width:100%;padding:10px 14px;border-radius:10px;background:var(--surface);border:1px solid var(--line);color:white;font-family:var(--font-sans);outline:none;">
+          <option value="centerpiece">★ Centerpiece Rotunda (The Grand Front Wall)</option>
+          <option value="monolith_back">Rotunda North Wall (Back of Monolith)</option>
+          <option value="gallery_0">West Gallery 1 (Facing East View)</option>
+          <option value="gallery_1">West Gallery 2 (Looking at Photo)</option>
+          <option value="gallery_2">West Gallery 3 (Our Moments Together)</option>
+          <option value="gallery_3">East Gallery 1 (Opposite Bench)</option>
+          <option value="gallery_4">East Gallery 2 (The Dedication Wall)</option>
+          <option value="gallery_5">East Gallery 3 (A Closer Look)</option>
+          <option value="gallery_6">South Wall Left (Hand in Hand)</option>
+          <option value="gallery_7">South Wall Right (Glimpse of Tomorrow)</option>
+        </select>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <label style="display:block;font-size:0.8125rem;color:var(--text-2);margin-bottom:6px;">Select Photo from Your Device</label>
+        <label for="modal-file-input" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;border:2px dashed var(--line-strong);border-radius:12px;background:var(--surface);cursor:pointer;transition:all 0.2s ease;">
+          <img id="modal-preview-img" style="max-height:140px;border-radius:6px;display:none;margin-bottom:10px;box-shadow:0 4px 12px rgba(0,0,0,0.5);">
+          <span id="modal-upload-label" style="font-size:0.875rem;font-weight:500;color:white;">Click or Drag to Upload Photo</span>
+          <span style="font-size:0.75rem;color:var(--text-3);margin-top:4px;">JPG, PNG, WEBP</span>
+          <input type="file" id="modal-file-input" accept="image/*" style="display:none;">
+        </label>
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <label style="display:block;font-size:0.8125rem;color:var(--text-2);margin-bottom:6px;">Photo Title</label>
+        <input type="text" id="insert-photo-title" placeholder="e.g. Rome Sunset" style="width:100%;padding:10px 14px;border-radius:10px;background:var(--surface);border:1px solid var(--line);color:white;font-family:var(--font-sans);outline:none;">
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <label style="display:block;font-size:0.8125rem;color:var(--text-2);margin-bottom:6px;">Story / Caption</label>
+        <input type="text" id="insert-photo-caption" placeholder="e.g. Walking beside you as the evening sky turned golden." style="width:100%;padding:10px 14px;border-radius:10px;background:var(--surface);border:1px solid var(--line);color:white;font-family:var(--font-sans);outline:none;">
+      </div>
+
+      <button type="button" id="btn-confirm-insert-photo" style="width:100%;padding:14px;border-radius:12px;background:white;color:#17131A;border:none;font-weight:600;font-size:0.9375rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+        <span>Hang Photo on Gallery Wall</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       DEDICATION PLAQUE MODAL
+       ====================================================================== -->
+  <div id="dedication-modal">
+    <div class="plaque-box">
+      <p class="plaque-eyebrow">A PERMANENT COLLECTION</p>
+      <h2 class="plaque-title" id="modal-dedication-recipient">For Emma</h2>
+      <p class="plaque-body" id="modal-dedication-body">Rome, one very fluffy dog, and you. The best days of my life, framed.</p>
+      <p class="plaque-sign" id="modal-dedication-sign">Always yours, Luca</p>
+      <button type="button" class="plaque-close" id="btn-close-plaque">Return to Gallery</button>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast-notice" id="toast-notice"></div>
+
+  <!-- Scripts -->
+  <script src="js/three.min.js"></script>
+  <script src="gallery-manager.js"></script>
+  <script src="audio.js"></script>
+  <script src="avatar-builder.js"></script>
+  <script src="multiplayer.js"></script>
+  <script src="museum-3d.js"></script>
+  <script src="lobby-customizer.js"></script>
+
+  <script>
+    // App Bootstrap & Orchestration
+    let lobby = null;
+    let museum = null;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      // 1. Initialize Lobby Scene
+      const lobbyCanvas = document.getElementById('lobby-canvas');
+      lobby = new LobbyManager(lobbyCanvas);
+
+      // Check URL parameters for custom shared gift
+      const urlParams = new URLSearchParams(window.location.search);
+      const recipient = urlParams.get('for') || 'Emma';
+      const sender = urlParams.get('from') || 'Luca';
+      const dedication = urlParams.get('msg') || 'Twenty-seven rooms of you, and I still ran out of walls.';
+
+      document.getElementById('lobby-presence-text').textContent = `${recipient} is inside.`;
+      document.getElementById('modal-dedication-recipient').textContent = `For ${recipient}`;
+      document.getElementById('modal-dedication-body').textContent = dedication;
+      document.getElementById('modal-dedication-sign').textContent = `Always yours, ${sender}`;
+
+      // 2. Enter Museum Button
+      const enterBtn = document.getElementById('btn-enter');
+      enterBtn.addEventListener('click', () => {
+        // Initialize audio on user interaction
+        if (window.museumAudio) window.museumAudio.init();
+
+        const profile = lobby.getProfile();
+
+        // Fade out lobby and fade in 3D game
+        const lobbyView = document.getElementById('lobby-view');
+        const gameView = document.getElementById('game-view');
+        const globalHeader = document.getElementById('global-header');
+
+        lobbyView.style.transition = 'opacity 0.6s ease';
+        lobbyView.style.opacity = '0';
+
+        setTimeout(() => {
+          lobbyView.style.display = 'none';
+          gameView.style.display = 'block';
+          globalHeader.style.display = 'none';
+
+          // Initialize 3D Museum
+          const museumCanvas = document.getElementById('museum-canvas');
+          museum = new MuseumWorld(museumCanvas);
+
+          // Apply URL parameters if present
+          if (recipient) museum.museumData.recipient = recipient;
+          if (sender) museum.museumData.sender = sender;
+          if (dedication) museum.museumData.dedication = dedication;
+
+          museum.spawnPlayerAvatar(profile);
+
+          showToast(`Welcome to Our Museum, ${profile.name}`);
+        }, 600);
+      });
+
+      // 3. Setup HUD buttons
+      const camBtn = document.getElementById('btn-cam-toggle');
+      camBtn.addEventListener('click', () => {
+        if (!museum) return;
+        const mode = museum.toggleCameraMode();
+        camBtn.classList.toggle('active', mode === 'first');
+        showToast(mode === 'first' ? 'First-person camera' : 'Third-person camera');
+      });
+
+      const audioBtn = document.getElementById('btn-audio-toggle');
+      const audioIconOn = document.getElementById('audio-icon-on');
+      const audioIconOff = document.getElementById('audio-icon-off');
+      audioBtn.addEventListener('click', () => {
+        if (!window.museumAudio) return;
+        const isMuted = window.museumAudio.toggleMute();
+        audioIconOn.style.display = isMuted ? 'none' : 'block';
+        audioIconOff.style.display = isMuted ? 'block' : 'none';
+        showToast(isMuted ? 'Audio muted' : 'Ambient sound playing');
+      });
+
+      // Chat Drawer toggle
+      const chatBtn = document.getElementById('btn-chat-toggle');
+      const chatDrawer = document.getElementById('chat-drawer');
+      const chatCloseBtn = document.getElementById('btn-chat-close');
+      chatBtn.addEventListener('click', () => {
+        chatDrawer.classList.toggle('show');
+        if (chatDrawer.classList.contains('show')) {
+          document.getElementById('chat-text-input').focus();
+        }
+      });
+      chatCloseBtn.addEventListener('click', () => {
+        chatDrawer.classList.remove('show');
+      });
+
+      // Chat Send
+      const chatInput = document.getElementById('chat-text-input');
+      const chatSendBtn = document.getElementById('btn-chat-send');
+      const doSendChat = () => {
+        const text = chatInput.value.trim();
+        if (!text || !museum || !museum.multiplayer) return;
+        museum.multiplayer.broadcastChat(text);
+        museum.addChatMessage(museum.myProfile.name, text);
+        chatInput.value = '';
+      };
+      chatSendBtn.addEventListener('click', doSendChat);
+      chatInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') doSendChat();
+      });
+
+      // Emotes Menu
+      const emoteBtn = document.getElementById('btn-emote-toggle');
+      const emoteMenu = document.getElementById('emote-menu');
+      emoteBtn.addEventListener('click', () => {
+        emoteMenu.classList.toggle('show');
+      });
+      document.querySelectorAll('.emote-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const emoji = btn.dataset.emote;
+          if (museum && museum.multiplayer) {
+            museum.multiplayer.broadcastEmote(emoji);
+          }
+          emoteMenu.classList.remove('show');
+        });
+      });
+
+      // Share Link
+      const shareBtn = document.getElementById('btn-share-link');
+      shareBtn.addEventListener('click', () => {
+        const shareUrl = window.location.href;
+        navigator.clipboard.writeText(shareUrl).then(() => {
+          showToast('Private gift link copied to clipboard!');
+        }).catch(() => {
+          showToast('Share link: ' + shareUrl);
+        });
+      });
+
+      // Fullscreen buttons
+      const fsHandler = () => {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(() => {});
+        } else {
+          document.exitFullscreen().catch(() => {});
+        }
+      };
+      document.getElementById('btn-lobby-fs').addEventListener('click', fsHandler);
+      document.getElementById('btn-game-fs').addEventListener('click', fsHandler);
+
+      // Close Inspection & Close Dedication
+      document.getElementById('btn-close-inspect').addEventListener('click', () => {
+        if (museum) museum.exitInspect();
+      });
+      document.getElementById('btn-close-plaque').addEventListener('click', () => {
+        if (museum) museum.closeDedicationModal();
+      });
+      document.getElementById('btn-lobby-about').addEventListener('click', () => {
+        const modal = document.getElementById('dedication-modal');
+        modal.classList.add('show');
+      });
+
+      // Photo Inserter Modal logic
+      const insertModal = document.getElementById('photo-insert-modal');
+      const insertTargetSelect = document.getElementById('insert-target-select');
+      const modalFileInput = document.getElementById('modal-file-input');
+      const modalPreviewImg = document.getElementById('modal-preview-img');
+      const modalUploadLabel = document.getElementById('modal-upload-label');
+      const insertPhotoTitle = document.getElementById('insert-photo-title');
+      const insertPhotoCaption = document.getElementById('insert-photo-caption');
+      const btnConfirmInsert = document.getElementById('btn-confirm-insert-photo');
+      const btnCloseInsert = document.getElementById('btn-close-insert-modal');
+      let uploadedDataUrl = null;
+
+      const openInsertModal = (targetId = null) => {
+        insertModal.style.display = 'flex';
+        if (targetId) {
+          insertTargetSelect.value = targetId;
+        } else if (museum && museum.currentInspectingArt) {
+          insertTargetSelect.value = museum.currentInspectingArt.id;
+        }
+        const currentArt = museum && museum.artworks.find(a => a.id === insertTargetSelect.value);
+        if (currentArt) {
+          insertPhotoTitle.value = currentArt.title || '';
+          insertPhotoCaption.value = currentArt.caption || '';
+          modalPreviewImg.src = currentArt.imageSrc;
+          modalPreviewImg.style.display = 'block';
+          modalUploadLabel.textContent = 'Click to Change Image';
+          uploadedDataUrl = currentArt.imageSrc;
+        }
+      };
+
+      const closeInsertModal = () => {
+        insertModal.style.display = 'none';
+      };
+
+      document.getElementById('btn-insert-photo-hud').addEventListener('click', () => openInsertModal());
+      document.getElementById('btn-inspect-replace-photo').addEventListener('click', () => {
+        if (museum && museum.currentInspectingArt) {
+          openInsertModal(museum.currentInspectingArt.id);
+        } else {
+          openInsertModal();
+        }
+      });
+      btnCloseInsert.addEventListener('click', closeInsertModal);
+
+      insertTargetSelect.addEventListener('change', () => {
+        const art = museum && museum.artworks.find(a => a.id === insertTargetSelect.value);
+        if (art) {
+          insertPhotoTitle.value = art.title || '';
+          insertPhotoCaption.value = art.caption || '';
+          modalPreviewImg.src = art.imageSrc;
+          modalPreviewImg.style.display = 'block';
+          uploadedDataUrl = art.imageSrc;
+        }
+      });
+
+      modalFileInput.addEventListener('change', async (e) => {
+        if (e.target.files && e.target.files[0]) {
+          const file = e.target.files[0];
+          try {
+            uploadedDataUrl = await window.galleryManager.processFile(file);
+            modalPreviewImg.src = uploadedDataUrl;
+            modalPreviewImg.style.display = 'block';
+            modalUploadLabel.textContent = 'Change Photo';
+            if (!insertPhotoTitle.value.trim()) {
+              insertPhotoTitle.value = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
+            }
+          } catch (err) {
+            showToast('Could not load image');
+          }
+        }
+      });
+
+      btnConfirmInsert.addEventListener('click', () => {
+        if (!uploadedDataUrl) {
+          showToast('Please select a photo first');
+          return;
+        }
+        const targetId = insertTargetSelect.value;
+        const title = insertPhotoTitle.value.trim() || 'Untitled Artwork';
+        const caption = insertPhotoCaption.value.trim() || '';
+
+        if (museum) {
+          museum.updateArtwork(targetId, uploadedDataUrl, title, caption);
+        }
+        closeInsertModal();
+        showToast('Photo framed and illuminated in the gallery!');
+      });
+    });
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast-notice');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+  </script>
+</body>
+</html>

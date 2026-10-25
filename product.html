@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Our Museum | 3D game gift to play together | Giftvera</title>
+  <meta name="description" content="A 3D museum hung with your photos, to walk through together from anywhere. Pay once and send it as a private link.">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Storefront & Product Page Layout */
+    .store-container {
+      max-width: 1180px;
+      margin: 80px auto 60px;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 56px;
+      align-items: start;
+    }
+
+    @media (max-width: 980px) {
+      .store-container {
+        grid-template-columns: 1fr;
+        gap: 36px;
+        margin-top: 64px;
+      }
+    }
+
+    /* Media Stage */
+    .product-media-stage {
+      position: relative;
+      width: 100%;
+      border-radius: var(--radius-lg);
+      background: #141113;
+      border: 1px solid var(--line);
+      overflow: hidden;
+      aspect-ratio: 16 / 9;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .main-video-player {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .main-image-display {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    .media-overlay-play {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .media-overlay-play:hover {
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .play-circle {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.95);
+      color: #17131A;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      transition: transform 0.2s ease;
+    }
+
+    .media-overlay-play:hover .play-circle {
+      transform: scale(1.1);
+    }
+
+    /* Thumbnail Reel */
+    .media-thumbnails-strip {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding: 16px 4px 8px;
+      scrollbar-width: thin;
+    }
+
+    .media-thumb-item {
+      width: 96px;
+      height: 64px;
+      flex-shrink: 0;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 2px solid transparent;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.15s ease;
+      background: #141113;
+    }
+
+    .media-thumb-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .media-thumb-item.active {
+      border-color: #FFFFFF;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .thumb-video-icon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.65);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Product Details Left Column */
+    .product-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2.5rem, 4vw, 3.5rem);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+      margin-top: 28px;
+    }
+
+    .product-tagline {
+      font-size: 1.125rem;
+      color: var(--text-2);
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+
+    .price-badge-row {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .price-current {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .price-original {
+      font-size: 1.125rem;
+      color: var(--text-3);
+      text-decoration: line-through;
+    }
+
+    .save-tag {
+      background: var(--accent-soft);
+      color: var(--accent);
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      font-size: 0.8125rem;
+      font-weight: 600;
+    }
+
+    .badges-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    .feature-badge {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 0.8125rem;
+      color: var(--text-2);
+    }
+
+    .demo-try-box {
+      margin-top: 28px;
+      padding: 20px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .btn-demo-start {
+      background: var(--ink);
+      color: var(--on-ink);
+      text-decoration: none;
+      padding: 12px 22px;
+      border-radius: var(--radius-pill);
+      font-size: 0.9375rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+      transition: transform 0.15s ease;
+    }
+
+    .btn-demo-start:hover {
+      transform: scale(1.04);
+    }
+
+    .demo-copy {
+      font-size: 0.875rem;
+      color: var(--text-2);
+      line-height: 1.45;
+    }
+
+    .highlights-list {
+      margin-top: 32px;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .highlights-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 0.9375rem;
+      color: var(--text-2);
+      line-height: 1.5;
+    }
+
+    .highlights-list li svg {
+      color: #10B981;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* Customizer Order Card (Right Column) */
+    .order-card {
+      background: var(--surface-card);
+      border: 1px solid var(--surface-card-border);
+      border-radius: var(--radius-lg);
+      padding: 36px 32px;
+      box-shadow: var(--shadow-lg);
+      backdrop-filter: blur(16px);
+    }
+
+    .order-head h2 {
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      font-weight: 400;
+      margin-bottom: 6px;
+    }
+
+    .order-head p {
+      font-size: 0.875rem;
+      color: var(--text-2);
+      line-height: 1.5;
+    }
+
+    /* AI panel */
+    .ai-smart-panel {
+      background: rgba(244, 114, 182, 0.08);
+      border: 1px solid rgba(244, 114, 182, 0.2);
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin: 24px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .ai-smart-panel strong {
+      display: block;
+      font-size: 0.875rem;
+      color: var(--text);
+    }
+
+    .ai-smart-panel span {
+      font-size: 0.8125rem;
+      color: var(--text-2);
+    }
+
+    .btn-ai-compose {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid var(--line-strong);
+      color: var(--text);
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-ai-compose:hover {
+      background: rgba(255, 255, 255, 0.22);
+    }
+
+    /* Form Fields */
+    .form-group-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-3);
+      margin: 28px 0 14px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .input-field-wrap {
+      margin-bottom: 18px;
+    }
+
+    .input-label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .input-hint {
+      font-size: 0.75rem;
+      color: var(--text-3);
+      margin-bottom: 6px;
+    }
+
+    .text-box {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 0.9375rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .text-box:focus {
+      border-color: var(--text);
+    }
+
+    /* File dropzone */
+    .file-dropzone {
+      border: 2px dashed var(--line-strong);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      cursor: pointer;
+      background: var(--surface);
+      transition: all 0.2s ease;
+    }
+
+    .file-dropzone:hover {
+      border-color: var(--text);
+      background: var(--surface-hover);
+    }
+
+    .file-dropzone input {
+      display: none;
+    }
+
+    /* Hosting tier selector */
+    .hosting-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .hosting-card {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      padding: 14px 10px;
+      border-radius: 12px;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s ease;
+    }
+
+    .hosting-card.active {
+      border-color: var(--text);
+      background: var(--surface-hover);
+    }
+
+    .hosting-name {
+      font-size: 0.875rem;
+      font-weight: 600;
+      display: block;
+    }
+
+    .hosting-sub {
+      font-size: 0.75rem;
+      color: var(--text-2);
+      margin-top: 2px;
+      display: block;
+    }
+
+    .hosting-cost {
+      font-size: 0.8125rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-top: 6px;
+      display: block;
+    }
+
+    /* Launch CTA Button */
+    .btn-create-launch {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      background: var(--ink);
+      color: var(--on-ink);
+      border: none;
+      font-family: var(--font-sans);
+      font-size: 1.125rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      transition: all 0.2s ease;
+    }
+
+    .btn-create-launch:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+    }
+
+    .trust-footer {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 18px;
+      font-size: 0.75rem;
+      color: var(--text-3);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Global Header -->
+  <header class="top-header">
+    <a href="index.html" class="nav-link">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+      <span>3D Game Experience</span>
+    </a>
+    <a href="product.html" class="logo-brand">
+      <span>Giftvera</span><span class="heart">♥</span>
+    </a>
+    <div class="header-actions">
+      <a href="index.html" class="badge-pill">
+        <span>Try Demo</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Store Container -->
+  <main class="store-container">
+    <!-- Left Column: Media Player & Product Narrative -->
+    <section class="product-info-col">
+      <!-- Media Stage with Scraped Video Teaser & Pictures -->
+      <div class="product-media-stage" id="media-stage">
+        <video id="stage-video" class="main-video-player" poster="assets/01-cover.webp" playsinline loop preload="metadata">
+          <source src="assets/02-teaser.mp4" type="video/mp4">
+        </video>
+        <img id="stage-image" class="main-image-display" src="" alt="Museum Preview">
+
+        <div class="media-overlay-play" id="play-overlay">
+          <div class="play-circle">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scraped Media Thumbnails Strip -->
+      <div class="media-thumbnails-strip" id="thumbnails-strip">
+        <div class="media-thumb-item active" data-type="video" data-src="assets/02-teaser.mp4">
+          <img src="assets/01-cover.webp" alt="Video Teaser">
+          <span class="thumb-video-icon"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg></span>
+        </div>
+        <div class="media-thumb-item" data-type="image" data-src="assets/03-at-the-centrepiece.webp">
+          <img src="assets/03-at-the-centrepiece.webp" alt="At the centerpiece">
+        </div>
+        <div class="media-thumb-item" data-type="image" data-src="assets/04-choose-your-look-kai.webp">
+          <img src="assets/04-choose-your-look-kai.webp" alt="Choose your look Kai">
+        </div>
+        <div class="media-thumb-item" data-type="image" data-src="assets/04-choose-your-look-mira.webp">
+          <img src="assets/04-choose-your-look-mira.webp" alt="Choose your look Mira">
+        </div>
+        <div class="media-thumb-item" data-type="image" data-src="assets/05-the-dedication.webp">
+          <img src="assets/05-the-dedication.webp" alt="The Dedication Plaque">
+        </div>
+        <div class="media-thumb-item" data-type="image" data-src="assets/07-the-east-gallery.webp">
+          <img src="assets/07-the-east-gallery.webp" alt="The East Gallery">
+        </div>
+        <div class="media-thumb-item" data-type="image" data-src="assets/08-a-photo-up-close.webp">
+          <img src="assets/08-a-photo-up-close.webp" alt="A Photo Up Close">
+        </div>
+        <div class="media-thumb-item" data-type="image" data-src="assets/09-watching-the-film.webp">
+          <img src="assets/09-watching-the-film.webp" alt="Watching the Film">
+        </div>
+        <div class="media-thumb-item" data-type="image" data-src="assets/10-on-the-bench.webp">
+          <img src="assets/10-on-the-bench.webp" alt="Sitting on the Bench">
+        </div>
+      </div>
+
+      <!-- Heading & Badges -->
+      <h1 class="product-title">Our Museum</h1>
+      <p class="product-tagline">A 3D museum hung with your photos, to walk through together from anywhere.</p>
+
+      <div class="price-badge-row">
+        <span class="price-current">$45.99</span>
+        <span class="price-original">$73.99</span>
+        <span class="save-tag">Save $28 • One-time</span>
+      </div>
+
+      <div class="badges-cloud">
+        <span class="feature-badge">3D multiplayer</span>
+        <span class="feature-badge">Up to 4 players</span>
+        <span class="feature-badge">Up to 45 photos</span>
+        <span class="feature-badge">Phone, tablet or computer</span>
+      </div>
+
+      <!-- Try Demo CTA Box -->
+      <div class="demo-try-box">
+        <a href="index.html" class="btn-demo-start">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+          <span>Try the demo</span>
+        </a>
+        <p class="demo-copy">
+          Try it free before you buy. You walk around with sample photos, a film and words. Works right in the browser.
+        </p>
+      </div>
+
+      <!-- Features Checklist -->
+      <ul class="highlights-list">
+        <li>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+          <span><strong>6 to 45 of your photos:</strong> Framed on the gallery walls, the first one illuminated as the grand centerpiece.</span>
+        </li>
+        <li>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+          <span><strong>Walk it together:</strong> Up to 4 people walk the quiet halls together from their own devices with customizable avatars and chat.</span>
+        </li>
+        <li>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+          <span><strong>Screening room:</strong> Add a short video and it plays with sound on the gallery cinema screen.</span>
+        </li>
+        <li>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+          <span><strong>Dedication plaque:</strong> Your personalized dedication carved at the entrance of the permanent collection.</span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Right Column: Personalization & Order Card -->
+    <aside class="order-card">
+      <div class="order-head">
+        <h2>Make it yours</h2>
+        <p>Add their name and your words. You can preview and walk through it immediately.</p>
+      </div>
+
+      <!-- AI Assistant Banner -->
+      <div class="ai-smart-panel">
+        <div>
+          <strong>Need help with the words?</strong>
+          <span>AI writes a draft. You edit it.</span>
+        </div>
+        <button type="button" class="btn-ai-compose" id="btn-ai-help">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4m0 12v4M2 12h4m12 0h4m-3.17-6.83-2.83 2.83m-8 8-2.83 2.83m0-13.66 2.83 2.83m8 8 2.83 2.83"/></svg>
+          <span>Write with AI</span>
+        </button>
+      </div>
+
+      <form id="customize-form" onsubmit="event.preventDefault(); launchCustomMuseum();">
+        <!-- Section: Names -->
+        <div class="form-group-title">Names</div>
+
+        <div class="input-field-wrap">
+          <label class="input-label" for="field-recipient">Their first name</label>
+          <div class="input-hint">On the dedication, the loading screen and the About box.</div>
+          <input type="text" id="field-recipient" class="text-box" placeholder="e.g. Emma" value="Emma" required>
+        </div>
+
+        <div class="input-field-wrap">
+          <label class="input-label" for="field-sender">Your first name</label>
+          <div class="input-hint">Signs the dedication.</div>
+          <input type="text" id="field-sender" class="text-box" placeholder="e.g. Luca" value="Luca" required>
+        </div>
+
+        <!-- Section: Dedication -->
+        <div class="form-group-title">Dedication</div>
+
+        <div class="input-field-wrap">
+          <label class="input-label" for="field-dedication">Dedication at the entrance</label>
+          <textarea id="field-dedication" class="text-box" rows="2" placeholder="e.g. Twenty-seven rooms of you, and I still ran out of walls.">Twenty-seven rooms of you, and I still ran out of walls.</textarea>
+        </div>
+
+        <div class="input-field-wrap">
+          <label class="input-label" for="field-sign">Dedication signature</label>
+          <input type="text" id="field-sign" class="text-box" placeholder="e.g. Always yours, Luca" value="Always yours, Luca">
+        </div>
+
+        <!-- Section: Photos Collection -->
+        <div class="form-group-title">The Collection</div>
+
+        <div class="input-field-wrap">
+          <label class="input-label">Your photos</label>
+          <div class="input-hint">Hung along the gallery halls; the first one is the centerpiece. 6 to 45 photos.</div>
+          <label class="file-dropzone" for="photo-file-input">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="color:var(--text-2);margin-bottom:8px;"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/><line x1="12" x2="12" y1="9" y2="15"/><line x1="9" x2="15" y1="12" y2="12"/></svg>
+            <p style="font-size:0.875rem;font-weight:600;color:white;">+ Insert Photos from Your Device</p>
+            <p style="font-size:0.75rem;color:var(--text-3);margin-top:4px;">Click to browse or drop images here</p>
+            <input type="file" id="photo-file-input" multiple accept="image/*">
+          </label>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;">
+            <span id="photos-count-badge" style="font-size:0.8125rem;color:var(--text-2);font-weight:500;">Gallery Collection:</span>
+            <button type="button" id="btn-reset-photos" style="background:none;border:none;color:var(--text-3);font-size:0.75rem;cursor:pointer;text-decoration:underline;">Restore sample photos</button>
+          </div>
+
+          <!-- Photo Grid Preview -->
+          <div id="product-photo-grid" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(95px, 1fr));gap:10px;margin-top:12px;max-height:260px;overflow-y:auto;padding-right:4px;"></div>
+        </div>
+
+        <!-- Section: How long it stays live -->
+        <div class="form-group-title">How long it stays live</div>
+
+        <div class="hosting-grid">
+          <div class="hosting-card active" data-months="1">
+            <span class="hosting-name">1 month</span>
+            <span class="hosting-sub">Live for 30 days</span>
+            <span class="hosting-cost">Included</span>
+          </div>
+          <div class="hosting-card" data-months="6">
+            <span class="hosting-name">6 months</span>
+            <span class="hosting-sub">Room to return</span>
+            <span class="hosting-cost">+$6.99</span>
+          </div>
+          <div class="hosting-card" data-months="12">
+            <span class="hosting-name">1 year</span>
+            <span class="hosting-sub">Best value</span>
+            <span class="hosting-cost">+$8.99</span>
+          </div>
+        </div>
+
+        <!-- Launch Button -->
+        <button type="submit" class="btn-create-launch">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg>
+          <span>Launch & Play Our Museum</span>
+        </button>
+
+        <div class="trust-footer">
+          <span>✓ One-time payment</span>
+          <span>✓ No app download needed</span>
+          <span>✓ Works on any phone or PC</span>
+        </div>
+      </form>
+    </aside>
+  </main>
+
+  <!-- Scripts -->
+  <script>
+    // Media stage switching
+    const stageVideo = document.getElementById('stage-video');
+    const stageImage = document.getElementById('stage-image');
+    const playOverlay = document.getElementById('play-overlay');
+    const thumbnails = document.querySelectorAll('.media-thumb-item');
+
+    playOverlay.addEventListener('click', () => {
+      stageVideo.play();
+      playOverlay.style.display = 'none';
+    });
+
+    stageVideo.addEventListener('play', () => {
+      playOverlay.style.display = 'none';
+    });
+    stageVideo.addEventListener('pause', () => {
+      playOverlay.style.display = 'flex';
+    });
+
+    thumbnails.forEach(thumb => {
+      thumb.addEventListener('click', () => {
+        thumbnails.forEach(t => t.classList.remove('active'));
+        thumb.classList.add('active');
+
+        const type = thumb.dataset.type;
+        const src = thumb.dataset.src;
+
+        if (type === 'video') {
+          stageImage.style.display = 'none';
+          stageVideo.style.display = 'block';
+          playOverlay.style.display = 'flex';
+        } else {
+          stageVideo.pause();
+          stageVideo.style.display = 'none';
+          playOverlay.style.display = 'none';
+          stageImage.style.display = 'block';
+          stageImage.src = src;
+        }
+      });
+    });
+
+    // Hosting cards
+    document.querySelectorAll('.hosting-card').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('.hosting-card').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+      });
+    });
+  </script>
+
+  <script src="gallery-manager.js"></script>
+  <script>
+    // Live Gallery Photos Grid & Upload Manager
+    const photoGrid = document.getElementById('product-photo-grid');
+    const photoInput = document.getElementById('photo-file-input');
+    const countBadge = document.getElementById('photos-count-badge');
+    const resetPhotosBtn = document.getElementById('btn-reset-photos');
+
+    const slotLabels = {
+      'centerpiece': '★ Centerpiece Rotunda',
+      'monolith_back': 'Rotunda North Wall',
+      'gallery_0': 'West Gallery 1',
+      'gallery_1': 'West Gallery 2',
+      'gallery_2': 'West Gallery 3',
+      'gallery_3': 'East Gallery 1',
+      'gallery_4': 'East Gallery 2',
+      'gallery_5': 'East Gallery 3',
+      'gallery_6': 'South Wall Left',
+      'gallery_7': 'South Wall Right'
+    };
+
+    const slotOrder = [
+      'centerpiece',
+      'gallery_0',
+      'gallery_1',
+      'gallery_2',
+      'gallery_3',
+      'gallery_4',
+      'gallery_5',
+      'gallery_6',
+      'gallery_7',
+      'monolith_back'
+    ];
+
+    async function refreshProductPhotoGrid() {
+      if (!window.galleryManager || !photoGrid) return;
+      const photos = await window.galleryManager.getAllPhotos();
+      photoGrid.innerHTML = '';
+
+      if (countBadge) {
+        countBadge.textContent = `${photos.length} photos ready for walls (Click card to set Centerpiece)`;
+      }
+
+      photos.forEach((photo) => {
+        const item = document.createElement('div');
+        item.style.position = 'relative';
+        item.style.aspectRatio = '3 / 4';
+        item.style.borderRadius = '8px';
+        item.style.overflow = 'hidden';
+        item.style.background = '#17131A';
+        item.style.border = photo.isCenterpiece ? '2px solid #F59E0B' : '1px solid var(--line)';
+        item.style.cursor = 'pointer';
+        item.title = `${photo.title || 'Framed Photo'} - Click to make Centerpiece`;
+
+        const img = document.createElement('img');
+        img.src = photo.src;
+        img.style.width = '100%';
+        img.style.height = '100%';
+        img.style.objectFit = 'cover';
+        item.appendChild(img);
+
+        // Wall location badge at bottom
+        const labelText = slotLabels[photo.id] || (photo.isCenterpiece ? '★ Centerpiece' : 'Gallery Wall');
+        const locBadge = document.createElement('span');
+        locBadge.textContent = labelText;
+        locBadge.style.position = 'absolute';
+        locBadge.style.bottom = '4px';
+        locBadge.style.left = '4px';
+        locBadge.style.right = '4px';
+        locBadge.style.background = 'rgba(10,7,9,0.85)';
+        locBadge.style.color = photo.isCenterpiece ? '#F59E0B' : '#E2DFD2';
+        locBadge.style.fontSize = '0.625rem';
+        locBadge.style.fontWeight = '600';
+        locBadge.style.padding = '2px 4px';
+        locBadge.style.borderRadius = '4px';
+        locBadge.style.textAlign = 'center';
+        locBadge.style.whiteSpace = 'nowrap';
+        locBadge.style.overflow = 'hidden';
+        locBadge.style.textOverflow = 'ellipsis';
+        item.appendChild(locBadge);
+
+        if (photo.isCenterpiece) {
+          const starBadge = document.createElement('span');
+          starBadge.textContent = '★ Centerpiece';
+          starBadge.style.position = 'absolute';
+          starBadge.style.top = '4px';
+          starBadge.style.left = '4px';
+          starBadge.style.background = '#F59E0B';
+          starBadge.style.color = '#17131A';
+          starBadge.style.fontSize = '0.625rem';
+          starBadge.style.fontWeight = '700';
+          starBadge.style.padding = '2px 6px';
+          starBadge.style.borderRadius = '999px';
+          item.appendChild(starBadge);
+        }
+
+        // Click to make Centerpiece
+        item.addEventListener('click', async () => {
+          photos.forEach(p => p.isCenterpiece = false);
+          photo.isCenterpiece = true;
+          await window.galleryManager.savePhoto(photo);
+          refreshProductPhotoGrid();
+        });
+
+        photoGrid.appendChild(item);
+      });
+    }
+
+    // Handle new photo file uploads (batch assign to gallery wall frames)
+    if (photoInput) {
+      photoInput.addEventListener('change', async (e) => {
+        if (!e.target.files || e.target.files.length === 0) return;
+        const files = Array.from(e.target.files);
+        
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          const targetSlotId = slotOrder[i % slotOrder.length];
+          try {
+            const dataUrl = await window.galleryManager.processFile(file);
+            const cleanTitle = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
+            
+            await window.galleryManager.savePhoto({
+              id: targetSlotId,
+              title: cleanTitle,
+              caption: 'Personal photo hung in our gallery collection.',
+              src: dataUrl,
+              isCenterpiece: (targetSlotId === 'centerpiece' && i === 0)
+            });
+          } catch (err) {
+            console.warn('Error reading file', file.name, err);
+          }
+        }
+        await refreshProductPhotoGrid();
+      });
+    }
+
+    if (resetPhotosBtn) {
+      resetPhotosBtn.addEventListener('click', async () => {
+        if (confirm('Restore the original sample gallery photos?')) {
+          await window.galleryManager.resetGallery();
+          await refreshProductPhotoGrid();
+        }
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', refreshProductPhotoGrid);
+
+    // AI sample generator
+    const aiDrafts = [
+      { dedication: 'Twenty-seven rooms of you, and I still ran out of walls.', sign: 'Always yours, Luca' },
+      { dedication: 'Every painting tells a story, but our memories are my favorite masterpiece.', sign: 'Forever, Luca' },
+      { dedication: 'From our first coffee in Rome to here. The gallery of my heart belongs to you.', sign: 'With all my love, Luca' }
+    ];
+    let draftIdx = 0;
+    const aiBtn = document.getElementById('btn-ai-help');
+    if (aiBtn) {
+      aiBtn.addEventListener('click', () => {
+        draftIdx = (draftIdx + 1) % aiDrafts.length;
+        document.getElementById('field-dedication').value = aiDrafts[draftIdx].dedication;
+        document.getElementById('field-sign').value = aiDrafts[draftIdx].sign;
+      });
+    }
+
+    // Launch Custom Museum
+    function launchCustomMuseum() {
+      const recipient = encodeURIComponent(document.getElementById('field-recipient').value.trim());
+      const sender = encodeURIComponent(document.getElementById('field-sender').value.trim());
+      const dedication = encodeURIComponent(document.getElementById('field-dedication').value.trim());
+
+      window.location.href = `index.html?for=${recipient}&from=${sender}&msg=${dedication}`;
+    }
+    window.launchCustomMuseum = launchCustomMuseum;
+  </script>
+</body>
+</html>
